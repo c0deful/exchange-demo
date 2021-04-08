@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UserRepositoryTests {
 
     private static final String VALID_PESEL = "72022842113";
-    private static final String INVALID_PESEL = "72022842113";
 
     private UserRepository userRepository;
 
@@ -29,11 +28,6 @@ public class UserRepositoryTests {
         userRepository.create(createdUser);
         User retrievedUser = userRepository.get(VALID_PESEL);
         assertEquals(createdUser, retrievedUser);
-    }
-
-    @Test
-    public void createInvalidPESEL() {
-        // TODO
     }
 
     @Test
