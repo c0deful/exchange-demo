@@ -14,12 +14,12 @@ public class UserRepositoryTests {
     private UserRepository userRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         userRepository = new UserRepository();
     }
 
     @Test
-    public void createAndRetrieve() {
+    void createAndRetrieve() {
         UserModel createdUser = Users.user();
         userRepository.create(createdUser);
         UserModel retrievedUser = userRepository.get(createdUser.getPesel());
@@ -27,7 +27,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void createDuplicateUser() {
+    void createDuplicateUser() {
         UserModel createdUser = Users.user();
         UserModel newUser = Users.user();
         userRepository.create(createdUser);
@@ -36,7 +36,7 @@ public class UserRepositoryTests {
     }
 
     @Test
-    public void retrieveMissingUser() {
+    void retrieveMissingUser() {
         assertThrows(UserNotFoundException.class, () -> userRepository.get(VALID_PESEL));
     }
 }

@@ -30,4 +30,8 @@ public class UserRepository {
         }
         return result;
     }
+
+    public void clear() {
+        users.clear();
+    }
 }

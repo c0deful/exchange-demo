@@ -2,8 +2,11 @@ package it.codeful.exchange.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.codeful.exchange.userservice.data.UserModel;
+import it.codeful.exchange.userservice.data.UserRepository;
+import it.codeful.exchange.userservice.data.UserView;
 import it.codeful.exchange.userservice.util.FixedClockConfig;
 import it.codeful.exchange.userservice.util.Users;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,15 +22,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = { UserServiceApplication.class, FixedClockConfig.class })
 @AutoConfigureMockMvc
-class UserServiceApplicationTests {
+class UserServiceApiTests {
 	@Autowired
 	private MockMvc mvc;
 	@Autowired
+	private UserRepository repository;
+	@Autowired
 	private ObjectMapper objectMapper;
+
+	@BeforeEach
+	void setUp() {
+		repository.clear();
+	}
 
 	@Test
 	void createAndRetrieveUser() throws Exception {
-		UserModel createdUser = Users.user();
+		UserView createdUser = Users.user().toView();
 		mvc.perform(
 				post("/user")
 						.content(objectMapper.writeValueAsBytes(createdUser))
@@ -43,15 +53,43 @@ class UserServiceApplicationTests {
 	}
 
 	@Test
-	void createUserInvalidPesel() throws Exception {
-		UserModel createdUser = Users.invalidPesel();
+	void createDuplicateUser() throws Exception {
+		UserView createdUser = Users.user().toView();
 		mvc.perform(
 				post("/user")
 						.content(objectMapper.writeValueAsBytes(createdUser))
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isCreated());
 		mvc.perform(
-				get("/user/{pesel}", createdUser.getPesel()))
+				post("/user")
+						.content(objectMapper.writeValueAsBytes(createdUser))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isConflict());
+	}
+
+	@Test
+	void invalidPesel() throws Exception {
+		UserView user = Users.invalidPesel().toView();
+		mvc.perform(
+				post("/user")
+						.content(objectMapper.writeValueAsBytes(user))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnprocessableEntity());
+		mvc.perform(
+				get("/user/{pesel}", user.getPesel()))
+				.andExpect(status().isUnprocessableEntity());
+	}
+
+	@Test
+	void userTooYoung() throws Exception {
+		UserView user = Users.tooYoung().toView();
+		mvc.perform(
+				post("/user")
+						.content(objectMapper.writeValueAsBytes(user))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnprocessableEntity());
+		mvc.perform(
+				get("/user/{pesel}", user.getPesel()))
 				.andExpect(status().isNotFound());
 	}
 }
