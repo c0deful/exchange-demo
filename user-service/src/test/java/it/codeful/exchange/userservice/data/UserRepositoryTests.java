@@ -1,5 +1,6 @@
 package it.codeful.exchange.userservice.data;
 
+import it.codeful.exchange.userservice.exception.DuplicateUserException;
 import it.codeful.exchange.userservice.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,17 @@ public class UserRepositoryTests {
 
     @Test
     public void createDuplicateUser() {
-        // TODO
+        User createdUser = User.builder()
+                .name("Jan Kowalski")
+                .pesel(VALID_PESEL)
+                .build();
+        User newUser = User.builder()
+                .name("Joanna Nowak")
+                .pesel(VALID_PESEL)
+                .build();
+        userRepository.create(createdUser);
+        assertThrows(DuplicateUserException.class, () -> userRepository.create(newUser));
+
     }
 
     @Test

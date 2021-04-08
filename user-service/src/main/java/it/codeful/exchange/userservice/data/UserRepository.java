@@ -1,21 +1,27 @@
 package it.codeful.exchange.userservice.data;
 
+import it.codeful.exchange.userservice.exception.DuplicateUserException;
 import it.codeful.exchange.userservice.exception.UserNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class UserRepository {
 
     private final Map<String, User> users = new HashMap<>();
 
     public void create(User user) {
-        users.put(user.getPesel(), user);
+        User existingUser = users.putIfAbsent(user.getPesel(), user);
+        if (existingUser != null) {
+            throw new DuplicateUserException(user.getPesel());
+        }
     }
 
     public User get(String pesel) {
-        return Optional.ofNullable(users.get(pesel))
-                        .orElseThrow(() -> new UserNotFoundException(pesel));
+        User result = users.get(pesel);
+        if (result == null) {
+            throw new UserNotFoundException(pesel);
+        }
+        return result;
     }
 }
