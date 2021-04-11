@@ -1,9 +1,8 @@
 package it.codeful.exchange.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.codeful.exchange.userservice.data.UserModel;
 import it.codeful.exchange.userservice.data.UserRepository;
-import it.codeful.exchange.userservice.data.UserView;
+import it.codeful.exchange.userservice.api.UserView;
 import it.codeful.exchange.userservice.util.FixedClockConfig;
 import it.codeful.exchange.userservice.util.Users;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,10 +73,10 @@ class UserServiceApiTests {
 				post("/user")
 						.content(objectMapper.writeValueAsBytes(user))
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isUnprocessableEntity());
+				.andExpect(status().isBadRequest());
 		mvc.perform(
 				get("/user/{pesel}", user.getPesel()))
-				.andExpect(status().isUnprocessableEntity());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -87,7 +86,7 @@ class UserServiceApiTests {
 				post("/user")
 						.content(objectMapper.writeValueAsBytes(user))
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isUnprocessableEntity());
+				.andExpect(status().isBadRequest());
 		mvc.perform(
 				get("/user/{pesel}", user.getPesel()))
 				.andExpect(status().isNotFound());

@@ -1,5 +1,6 @@
 package it.codeful.exchange.userservice.data;
 
+import it.codeful.exchange.userservice.api.UserView;
 import it.codeful.exchange.userservice.validation.MinAgePESEL;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +12,9 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 public class UserModel {
-    @NonNull @PESEL @MinAgePESEL String pesel;
-    @NonNull @NotBlank String firstName;
-    @NonNull @NotBlank String lastName;
+    private String pesel;
+    private String firstName;
+    private String lastName;
 
     public UserView toView() {
         return UserView.builder()

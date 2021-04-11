@@ -16,14 +16,14 @@ public class UserRepository {
 
     private final Map<String, UserModel> users = new HashMap<>();
 
-    public void create(@Valid UserModel user) {
+    public void create(UserModel user) {
         UserModel existingUser = users.putIfAbsent(user.getPesel(), user);
         if (existingUser != null) {
             throw new DuplicateUserException(user.getPesel());
         }
     }
 
-    public UserModel get(@Valid @PESEL String pesel) {
+    public UserModel get(String pesel) {
         UserModel result = users.get(pesel);
         if (result == null) {
             throw new UserNotFoundException(pesel);
