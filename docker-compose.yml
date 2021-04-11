@@ -1,5 +1,9 @@
 version: "3"
 services:
+  gateway-service:
+    container_name: gateway-service
+    restart: always
+    build: ./gateway-service
   exchange-rate-service:
     container_name: exchange-rate-service
     restart: always
