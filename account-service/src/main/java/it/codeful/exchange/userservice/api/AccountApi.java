@@ -1,7 +1,7 @@
 package it.codeful.exchange.userservice.api;
 
+import it.codeful.exchange.userservice.data.AccountModel;
 import it.codeful.exchange.userservice.data.AccountRepository;
-import it.codeful.exchange.userservice.data.AccountView;
 import it.codeful.exchange.userservice.data.Currency;
 import it.codeful.exchange.userservice.exception.AccountNotFoundException;
 import it.codeful.exchange.userservice.exception.DuplicateAccountException;
@@ -26,13 +26,21 @@ import java.math.RoundingMode;
 @RestController
 @Slf4j
 public class AccountApi {
+    private final AccountRepository accountRepository;
+
     @Autowired
-    private AccountRepository accountRepository;
+    public AccountApi(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     @PostMapping("/account")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createAccount(@RequestBody AccountView account) {
-        accountRepository.create(account.toModel());
+    public void createAccount(@RequestBody CreateAccountCommand command) {
+        accountRepository.create(AccountModel.builder()
+                .ownerPesel(command.getPesel())
+                .currency(Currency.fromCode(command.getCurrencyCode()))
+                .amount(command.getAmount().setScale(2, RoundingMode.DOWN))
+                .build());
     }
 
     @GetMapping("/account/{pesel}/{currency}")

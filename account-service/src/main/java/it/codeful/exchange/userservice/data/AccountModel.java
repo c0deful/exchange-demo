@@ -1,5 +1,6 @@
 package it.codeful.exchange.userservice.data;
 
+import it.codeful.exchange.userservice.api.AccountView;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -11,9 +12,9 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class AccountModel {
-    @NonNull @PESEL String ownerPesel;
-    @Min(0) BigDecimal amount;
-    @NonNull Currency currency;
+    private @NonNull @PESEL String ownerPesel;
+    private @Min(0) BigDecimal amount;
+    private @NonNull Currency currency;
 
     public AccountView toView() {
         return AccountView.builder()

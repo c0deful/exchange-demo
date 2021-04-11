@@ -1,7 +1,10 @@
 package it.codeful.exchange.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.codeful.exchange.userservice.api.AccountView;
+import it.codeful.exchange.userservice.api.CreateAccountCommand;
 import it.codeful.exchange.userservice.data.AccountRepository;
+import it.codeful.exchange.userservice.util.Accounts;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +32,37 @@ class AccountServiceApiTests {
 	@BeforeEach
 	void setUp() {
 		repository.clear();
+	}
+
+	@Test
+	void createAndRetrieveAccount() throws Exception {
+		CreateAccountCommand command = Accounts.createAccountCommand();
+		mvc.perform(
+				post("/account")
+						.content(objectMapper.writeValueAsBytes(command))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated());
+		mvc.perform(
+				get("/account/{pesel}/PLN", command.getPesel()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.pesel").value(command.getPesel()))
+				.andExpect(jsonPath("$.amount").value(100))
+				.andExpect(jsonPath("$.currencyCode").value(command.getCurrencyCode()));
+	}
+
+	@Test
+	void createDuplicateAccount() throws Exception {
+		CreateAccountCommand command = Accounts.createAccountCommand();
+		mvc.perform(
+				post("/account")
+						.content(objectMapper.writeValueAsBytes(command))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated());
+		mvc.perform(
+				post("/account")
+						.content(objectMapper.writeValueAsBytes(command))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isConflict());
 	}
 }
