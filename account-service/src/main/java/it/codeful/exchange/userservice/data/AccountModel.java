@@ -17,7 +17,7 @@ public class AccountModel {
 
     public AccountView toView() {
         return AccountView.builder()
-                .ownerPesel(ownerPesel)
+                .pesel(ownerPesel)
                 .amount(amount)
                 .currencyCode(currency.toString())
                 .build();
