@@ -28,7 +28,7 @@ public class NbpApiClient {
             .build(CacheLoader.from(this::loadExchangeRateForCurrency));
 
     @Autowired
-    public NbpApiClient(RestTemplateBuilder restTemplateBuilder, @Value("${host.nbp") String host) {
+    public NbpApiClient(RestTemplateBuilder restTemplateBuilder, @Value("${host.nbp}") String host) {
         restTemplate = restTemplateBuilder.rootUri(host).build();
     }
 
