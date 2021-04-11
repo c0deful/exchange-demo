@@ -1,0 +1,14 @@
+version: "3"
+services:
+  exchange-rate-service:
+    container_name: exchange-rate-service
+    restart: always
+    build: ./exchange-rate-service
+  account-service:
+    container_name: account-service
+    restart: always
+    build: ./account-service
+  user-service:
+    container_name: user-service
+    restart: always
+    build: ./user-service
