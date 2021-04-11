@@ -13,5 +13,5 @@ class RegisterCustomerCommand {
     private @NonNull @PESEL String pesel;
     private @NotBlank String firstName;
     private @NotBlank String lastName;
-    private @NonNull @Min(0) BigDecimal plnStartingAmount;
+    private @NonNull @Min(0) BigDecimal pln;
 }

@@ -10,17 +10,17 @@ services:
     container_name: exchange-rate-service
     restart: always
     build: ./exchange-rate-service
-    ports:
-      - 8080:8080
+    expose:
+      - 8080
   account-service:
     container_name: account-service
     restart: always
     build: ./account-service
-    ports:
-      - 8080:8080
+    expose:
+      - 8080
   user-service:
     container_name: user-service
     restart: always
     build: ./user-service
-    ports:
-      - 8080:8080
+    expose:
+      - 8080

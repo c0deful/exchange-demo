@@ -27,7 +27,7 @@ class AccountRepositoryTests {
         accountRepository.create(createdAccount);
         AccountModel retrievedAccount = accountRepository.get(createdAccount.getOwnerPesel(), createdAccount.getCurrency());
         assertEquals(createdAccount, retrievedAccount);
-        assertEquals(BigDecimal.ZERO, retrievedAccount.getAmount());
+        assertEquals(BigDecimal.valueOf(100), retrievedAccount.getAmount());
     }
 
     @Test

@@ -19,7 +19,6 @@ public class AccountRepository {
     private final Map<AccountKey, AccountModel> accounts = new HashMap<>();
 
     public void create(@Valid AccountModel account) {
-        account.setAmount(BigDecimal.ZERO);
         AccountKey key = new AccountKey(account.getOwnerPesel(), account.getCurrency());
         AccountModel existingAccount = accounts.putIfAbsent(key, account);
         if (existingAccount != null) {

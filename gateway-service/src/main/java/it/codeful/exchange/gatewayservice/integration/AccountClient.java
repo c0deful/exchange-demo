@@ -22,7 +22,7 @@ public class AccountClient {
     public void createAccount(String pesel, String isoCurrencyCode, BigDecimal startingAmount) {
         restTemplate.postForLocation("/account", Map.of(
                 "pesel", pesel,
-                "isoCurrencyCode", isoCurrencyCode,
+                "currencyCode", isoCurrencyCode,
                 "amount", startingAmount
         ));
     }
