@@ -43,7 +43,7 @@ class ExchangeRateApiTests {
                         .param("amount", "10.00")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("38.56"));
+                .andExpect(content().json("2.59"));
     }
 
     @Test

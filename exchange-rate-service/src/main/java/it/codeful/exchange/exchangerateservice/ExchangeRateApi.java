@@ -31,7 +31,7 @@ public class ExchangeRateApi {
     @GetMapping("/{isoCurrencyCode}/ask")
     @ResponseStatus(HttpStatus.OK)
     public BigDecimal calculateAskAmount(@PathVariable("isoCurrencyCode") String isoCurrencyCode, @RequestParam BigDecimal amount) {
-        return client.getAskExchangeRate(isoCurrencyCode).multiply(amount).setScale(2, RoundingMode.DOWN);
+        return amount.divide(client.getAskExchangeRate(isoCurrencyCode), RoundingMode.DOWN).setScale(2, RoundingMode.DOWN);
     }
 
     @ExceptionHandler
