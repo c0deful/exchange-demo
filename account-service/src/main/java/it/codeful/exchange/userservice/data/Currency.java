@@ -1,6 +1,6 @@
 package it.codeful.exchange.userservice.data;
 
-import it.codeful.exchange.userservice.exception.UnsupportedCurrencyExcpetion;
+import it.codeful.exchange.userservice.exception.UnsupportedCurrencyException;
 
 public enum Currency {
     PLN, USD;
@@ -9,7 +9,7 @@ public enum Currency {
         try {
             return Currency.valueOf(code);
         } catch (IllegalArgumentException e) {
-            throw new UnsupportedCurrencyExcpetion(code);
+            throw new UnsupportedCurrencyException(code);
         }
     }
 }

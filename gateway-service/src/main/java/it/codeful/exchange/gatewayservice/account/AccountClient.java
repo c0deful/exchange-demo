@@ -1,4 +1,4 @@
-package it.codeful.exchange.gatewayservice.integration;
+package it.codeful.exchange.gatewayservice.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,5 +25,9 @@ public class AccountClient {
                 "currencyCode", isoCurrencyCode,
                 "amount", startingAmount
         ));
+    }
+
+    public AccountView getAccount(String pesel, String isoCurrencyCode) {
+        return restTemplate.getForObject("/account/{currencyCode}/{pesel}", AccountView.class, isoCurrencyCode, pesel);
     }
 }

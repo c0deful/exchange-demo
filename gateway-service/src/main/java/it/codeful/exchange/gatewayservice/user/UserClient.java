@@ -1,4 +1,4 @@
-package it.codeful.exchange.gatewayservice.integration;
+package it.codeful.exchange.gatewayservice.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,5 +24,9 @@ public class UserClient {
                 "firstName", firstName,
                 "lastName", lastName
         ));
+    }
+
+    public UserView getUser(String pesel) {
+        return restTemplate.getForObject("/user/{pesel}", UserView.class, pesel);
     }
 }
