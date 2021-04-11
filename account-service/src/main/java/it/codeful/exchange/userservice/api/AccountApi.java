@@ -1,4 +1,4 @@
-package it.codeful.exchange.userservice;
+package it.codeful.exchange.userservice.api;
 
 import it.codeful.exchange.userservice.data.AccountRepository;
 import it.codeful.exchange.userservice.data.AccountView;
@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.ConstraintViolationException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @RestController
 @Slf4j
@@ -32,10 +35,28 @@ public class AccountApi {
         accountRepository.create(account.toModel());
     }
 
-    @GetMapping("/account/{currency}/{pesel}")
+    @GetMapping("/account/{pesel}/{currency}")
     @ResponseStatus(HttpStatus.OK)
-    public AccountView getAccount(@PathVariable("currency") String currency, @PathVariable("pesel") String pesel) {
+    public AccountView getAccount(@PathVariable("pesel") String pesel, @PathVariable("currency") String currency) {
         return accountRepository.get(pesel, Currency.fromCode(currency)).toView();
+    }
+
+    @PostMapping("/account/{pesel}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeBalance(@PathVariable("pesel") String pesel, @RequestBody ChangeBalanceCommand command) {
+        boolean anyfallBelowZero = command.getBalanceChanges().entrySet().stream()
+                .anyMatch(e -> fallsBelowZero(pesel, e.getKey(), e.getValue()));
+        if (anyfallBelowZero) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Account balance must not fall below zero");
+        }
+        command.getBalanceChanges().forEach((curr, change) ->  {
+            var account = accountRepository.get(pesel, curr);
+            account.setAmount(account.getAmount().add(change).setScale(2, RoundingMode.DOWN));
+        });
+    }
+
+    private boolean fallsBelowZero(String pesel, Currency currency, BigDecimal changeAmount) {
+        return accountRepository.get(pesel, currency).getAmount().add(changeAmount).compareTo(BigDecimal.ZERO) < 0;
     }
 
     @ExceptionHandler

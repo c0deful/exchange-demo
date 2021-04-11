@@ -1,7 +1,11 @@
-package it.codeful.exchange.gatewayservice;
+package it.codeful.exchange.gatewayservice.api;
 
 import it.codeful.exchange.gatewayservice.account.AccountClient;
 import it.codeful.exchange.gatewayservice.account.AccountView;
+import it.codeful.exchange.gatewayservice.api.CustomerBalanceView;
+import it.codeful.exchange.gatewayservice.api.ExchangeCurrencyCommand;
+import it.codeful.exchange.gatewayservice.api.RegisterCustomerCommand;
+import it.codeful.exchange.gatewayservice.exchangerate.ExchangeRateClient;
 import it.codeful.exchange.gatewayservice.user.UserClient;
 import it.codeful.exchange.gatewayservice.user.UserView;
 import org.hibernate.validator.constraints.pl.PESEL;
@@ -30,6 +34,9 @@ public class GatewayApi {
     private AccountClient accountClient;
 
     @Autowired
+    private ExchangeRateClient exchangeRateClient;
+
+    @Autowired
     private UserClient userClient;
 
     @GetMapping("/customer/{pesel}")
@@ -56,6 +63,23 @@ public class GatewayApi {
         userClient.registerUser(command.getPesel(), command.getFirstName(), command.getLastName());
         accountClient.createAccount(command.getPesel(), "PLN", command.getPln());
         accountClient.createAccount(command.getPesel(), "USD", BigDecimal.ZERO);
+    }
+
+    @PostMapping("/customer/{pesel}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void exchangeCurrency(@RequestBody @Valid ExchangeCurrencyCommand command, @PathVariable("pesel") @Valid @PESEL String pesel) {
+        BigDecimal toAmount;
+        if ("PLN".equals(command.getFromCurrencyCode())) {
+            toAmount = exchangeRateClient.calculateAskAmount(command.getToCurrencyCode(), command.getFromAmount());
+        } else if ("PLN".equals(command.getToCurrencyCode())) {
+            toAmount = exchangeRateClient.calculateBidAmount(command.getFromCurrencyCode(), command.getFromAmount());
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Only exchanges including PLN are supported");
+        }
+        accountClient.updateBalances(pesel, Map.of(
+                command.getFromCurrencyCode(), command.getFromAmount().negate(),
+                command.getToCurrencyCode(), toAmount
+        ));
     }
 
     @ExceptionHandler

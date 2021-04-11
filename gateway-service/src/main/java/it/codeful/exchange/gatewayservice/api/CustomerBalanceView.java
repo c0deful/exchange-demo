@@ -1,4 +1,4 @@
-package it.codeful.exchange.gatewayservice;
+package it.codeful.exchange.gatewayservice.api;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @Builder
-public class CustomerBalanceView {
+class CustomerBalanceView {
     private String pesel;
     private String firstName;
     private String lastName;

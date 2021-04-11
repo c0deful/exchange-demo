@@ -1,4 +1,4 @@
-package it.codeful.exchange.gatewayservice;
+package it.codeful.exchange.gatewayservice.api;
 
 import lombok.Data;
 import lombok.NonNull;
