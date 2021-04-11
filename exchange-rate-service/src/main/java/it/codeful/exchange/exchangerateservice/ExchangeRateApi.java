@@ -19,8 +19,12 @@ import java.math.RoundingMode;
 @Slf4j
 public class ExchangeRateApi {
 
+    private final NbpApiClient client;
+
     @Autowired
-    private NbpApiClient client;
+    public ExchangeRateApi(NbpApiClient client) {
+        this.client = client;
+    }
 
     @GetMapping("/{isoCurrencyCode}/bid")
     @ResponseStatus(HttpStatus.OK)
