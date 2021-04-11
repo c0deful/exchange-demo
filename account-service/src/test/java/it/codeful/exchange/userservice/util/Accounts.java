@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 public final class Accounts {
     public static final String VALID_PESEL = "72022842113";
 
-    public static CreateAccountCommand createAccountCommand() {
+    public static CreateAccountCommand createAccountCommand(Currency currency) {
         return CreateAccountCommand.builder()
                 .pesel(VALID_PESEL)
-                .currencyCode("PLN")
+                .currencyCode(currency.name())
                 .amount(BigDecimal.valueOf(100))
                 .build();
     }
