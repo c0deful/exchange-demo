@@ -4,19 +4,23 @@ services:
     container_name: gateway-service
     restart: always
     build: ./gateway-service
-    ports: 8080:8080
+    ports:
+      - 8080:8080
   exchange-rate-service:
     container_name: exchange-rate-service
     restart: always
     build: ./exchange-rate-service
-    ports: 8080:8080
+    ports:
+      - 8080:8080
   account-service:
     container_name: account-service
     restart: always
     build: ./account-service
-    ports: 8080:8080
+    ports:
+      - 8080:8080
   user-service:
     container_name: user-service
     restart: always
     build: ./user-service
-    ports: 8080:8080
+    ports:
+      - 8080:8080
