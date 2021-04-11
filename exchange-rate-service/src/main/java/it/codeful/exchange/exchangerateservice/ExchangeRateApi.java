@@ -22,10 +22,16 @@ public class ExchangeRateApi {
     @Autowired
     private NbpApiClient client;
 
-    @GetMapping("/buy/{isoCurrencyCode}")
+    @GetMapping("/{isoCurrencyCode}/bid")
     @ResponseStatus(HttpStatus.OK)
-    public BigDecimal buyCurrency(@PathVariable("isoCurrencyCode") String isoCurrencyCode, @RequestParam BigDecimal amount) {
+    public BigDecimal calculateBidAmount(@PathVariable("isoCurrencyCode") String isoCurrencyCode, @RequestParam BigDecimal amount) {
         return client.getBidExchangeRate(isoCurrencyCode).multiply(amount).setScale(2, RoundingMode.DOWN);
+    }
+
+    @GetMapping("/{isoCurrencyCode}/ask")
+    @ResponseStatus(HttpStatus.OK)
+    public BigDecimal calculateAskAmount(@PathVariable("isoCurrencyCode") String isoCurrencyCode, @RequestParam BigDecimal amount) {
+        return client.getAskExchangeRate(isoCurrencyCode).multiply(amount).setScale(2, RoundingMode.DOWN);
     }
 
     @ExceptionHandler

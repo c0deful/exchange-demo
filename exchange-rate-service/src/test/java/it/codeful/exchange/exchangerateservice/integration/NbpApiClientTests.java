@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Disabled("intended for manual testing only")
-public class NbpApiClientTests {
+class NbpApiClientTests {
 
     @Autowired
     private NbpApiClient client;

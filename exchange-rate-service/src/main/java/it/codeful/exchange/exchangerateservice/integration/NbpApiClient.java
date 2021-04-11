@@ -5,6 +5,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import it.codeful.exchange.exchangerateservice.exception.ExchangeRateRetrievalException;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,9 +19,15 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class NbpApiClient {
 
-    private static final String HOST = "http://api.nbp.pl";
+    public static final String HOST = "http://api.nbp.pl";
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    @Autowired
+    public NbpApiClient(RestTemplateBuilder restTemplateBuilder) {
+        restTemplate = restTemplateBuilder.rootUri(HOST).build();
+    }
+
     private final LoadingCache<String, NbpExchangeRate> exchangeRates = CacheBuilder.newBuilder()
             .expireAfterAccess(5, TimeUnit.SECONDS)
             .maximumSize(100)
@@ -42,7 +50,7 @@ public class NbpApiClient {
     }
 
     private NbpExchangeRate loadExchangeRateForCurrency(String isoCurrencyCode) {
-        return Objects.requireNonNull(restTemplate.getForObject(HOST + "/api/exchangerates/rates/c/{isoCurrencyCode}",
+        return Objects.requireNonNull(restTemplate.getForObject("/api/exchangerates/rates/c/{isoCurrencyCode}",
                 NbpApiResponse.class, isoCurrencyCode))
                 .getRates()
                 .stream()
